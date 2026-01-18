@@ -18,4 +18,5 @@ chat_id = int(os.getenv('CHAT_ID'))
 def get_kmdw_cli():
   # Use tavu CSV file:119
   try:
-    df = pd.read_csv('ptype_meteo__network_IL_ASOS__zstation_MDW__sts_2026-01-16-0000__ets_2026-01-17-000
+    df = pd.read_csv('ptype_meteo__network_IL_ASOS__zstation_MDW__sts_2026-01-16-0000__ets_2026-01-17-0000___r_t__dpi_400___cb_1.csv')
+
