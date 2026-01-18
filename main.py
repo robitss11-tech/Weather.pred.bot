@@ -1,4 +1,6 @@
 import os
+print("Keys OK:", bool(os.getenv('KALSHI_KEY_ID')))
+print("Telegram OK:", bool(os.getenv('TELEGRAM_TOKEN')))
 import time
 import requests
 import pandas as pd
