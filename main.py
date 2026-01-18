@@ -5,7 +5,7 @@ import time
 import requests
 import pandas as pd
 import numpy as np
-from kalshi_python import Kalshi
+from kalshi_python import Configuration, KalshiClient
 from telegram import Bot
 
 # Auth
