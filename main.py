@@ -1,5 +1,5 @@
 import os, time, requests, pandas as pd, numpy as np
-from kalshi import Kalshi
+from kalshi_python import Kalshi
 from telegram import Bot
 
 kalshi = Kalshi()
