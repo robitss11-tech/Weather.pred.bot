@@ -83,3 +83,6 @@ def predict_cli(metar):
         model = joblib.load('model.pkl')
     pred = model.predict([[metar['tmpf'], metar['sknt']]])[0]
     return pred
+metar = {'tmpf': 25, 'sknt': 10}  # No METAR API
+cli_pred = predict_cli(metar)
+msg = f"CLI Prognoze: {cli_pred:.1f}°F"
