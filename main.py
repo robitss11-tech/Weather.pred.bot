@@ -16,5 +16,6 @@ bot = Bot(token=os.getenv('TELEGRAM_TOKEN'))
 chat_id = int(os.getenv('CHAT_ID'))
 
 def get_kmdw_cli():
-  # NOAA METAR KMDW 1h data
-  url = 'https://api.aviationweather.gov/metar?ids=K
+  # Use tavu CSV file:119
+  try:
+    df = pd.read_csv('ptype_meteo__network_IL_ASOS__zstation_MDW__sts_2026-01-16-0000__ets_2026-01-17-000
