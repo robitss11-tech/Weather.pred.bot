@@ -46,7 +46,11 @@ async def main_loop():
             msg = f"KMDW CLI: {cli}°F, Balance: {balance['balance']}"
             await bot.send_message(chat_id=chat_id, text=msg)
         time.sleep(300)  # 5min
-
 if __name__ == "__main__":
+    import asyncio
     port = int(os.getenv("PORT", 10000))
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    # Start server fonā
+    config = uvicorn.Config(app, host="0.0.0.0", port=port)
+    server = uvicorn.Server(config)
+    asyncio.run(server.serve())
+    # Bot loop paralēli (vai threading)
