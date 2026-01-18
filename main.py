@@ -1,39 +1,52 @@
-import os
-import time
-import requests
-import pandas as pd
-import numpy as np
+import os, time, pandas as pd
+from kalshi_python import Configuration, KalshiClient
 from telegram import Bot
-from kalshi_python import Configuration, KalshiClient  # Pareizais imports!
+from fastapi import FastAPI
+import uvicorn, logging
+logging.basicConfig(level=logging.INFO)
 
-# Debug prints
-print("Keys OK:", bool(os.getenv('KALSHI_KEY_ID')))
-print("Telegram OK:", bool(os.getenv('TELEGRAM_TOKEN')))
+# Env
+kalshi_key_id = os.getenv('KALSHI_KEY_ID')
+kalshi_priv_key = os.getenv('KALSHI_PRIVATE_KEY')
+telegram_token = os.getenv('TELEGRAM_TOKEN')
+chat_id = os.getenv('CHAT_ID')
 
-# Kalshi setup
-config = Configuration()
-config.api_key_id = os.getenv('KALSHI_KEY_ID')
-config.private_key_pem = os.getenv('KALSHI_PRIVATE_KEY_PEM')  # PEM formātā!
-client = KalshiClient(config)  # NE 'Kalshi()', bet 'KalshiClient(config)'
+app = FastAPI()
+client = None
+bot = Bot(token=telegram_token) if telegram_token else None
 
-bot = Bot(token=os.getenv('TELEGRAM_TOKEN'))
-chat_id = int(os.getenv('CHAT_ID'))
+@app.get("/")
+async def root():
+    return {"status": "KMDW Kalshi Bot live", "kalshi_ready": client is not None}
+
+def init_kalshi():
+    global client
+    config = Configuration()
+    config.api_key_id = kalshi_key_id
+    config.private_key_pem = kalshi_priv_key
+    client = KalshiClient(config)
+    logging.info("Kalshi init OK")
 
 def get_kmdw_cli():
     try:
-        df = pd.read_csv('ptype_meteonetwork_IL_ASOSzstation_MDWsts_2026-01-16-0000ets_2026-01-17-0000r_tdpi_400cb_1.csv')
-        # Jūsu analīze šeit...
-        return df
-    except Exception as e:
-        print(f"CSV error: {e}")
+        # Lokālais CSV vai NOAA URL
+        url = 'https://.../ptype_meteonetwork_IL_ASOS.csv'  # Jūsu CSV
+        df = pd.read_csv(url)
+        cli = df['CLI'].max()  # Jūsu metrika
+        return cli
+    except:
         return None
 
-# Galvenā cilpa (piemērs)
-while True:
-    df = get_kmdw_cli()
-    if df is not None:
-        # Kalshi piemērs: balanss
-        balance = client.get_balance()
-        message = f"KMDW CLI data loaded. Balance: {balance}"
-        bot.send_message(chat_id=chat_id, text=message)
-    time.sleep(300)  # 5min
+async def main_loop():
+    init_kalshi()
+    while True:
+        cli = get_kmdw_cli()
+        if client and cli:
+            balance = client.get_balance()
+            msg = f"KMDW CLI: {cli}°F, Balance: {balance['balance']}"
+            await bot.send_message(chat_id=chat_id, text=msg)
+        time.sleep(300)  # 5min
+
+if __name__ == "__main__":
+    port = int(os.getenv("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
