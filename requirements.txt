@@ -9,3 +9,7 @@ fastapi==0.115.0
 uvicorn[standard]==0.32.0
 cryptography==43.0.1
 cdsapi==0.7.2
+xgboost==2.1.1
+ecmwf-opendata==1.7.0
+scipy==1.14.1
+cachetools==5.5.0
