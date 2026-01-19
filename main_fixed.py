@@ -491,3 +491,4 @@ if __name__ == "__main__":
     config = uvicorn.Config(app, host="0.0.0.0", port=port, log_level="info")
     server = uvicorn.Server(config)
     asyncio.run(server.serve())
+    # Update v1 - syntax fixed by Perplexity AI 2026-01-19
